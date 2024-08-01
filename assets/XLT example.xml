@@ -1,0 +1,175 @@
+ <xsl:template match="/" xml:id="id_11">
+              <nstrgmpr:Write xml:id="id_12">
+                    <ns68:wsm>
+                          <ns68:otm>
+                                <xsl:value-of select="$getWaveHdr/nsmpr7:executeResponse/ns56:response-wrapper/ns56:items[1.0]/ns56:oTMID"/>
+                          </ns68:otm>
+                          <xsl:for-each select="$WriteDeleveryTempGroup_REQUEST/nsmpr3:Write/nsmpr0:wsm/nsmpr0:delevery">
+                                <xsl:variable name="Pivot" select="position()"/>
+                                <xsl:variable name="Delivery" select="nsmpr0:deliveryID"/>
+                                <xsl:variable name="DestFac" select="nsmpr0:destination_facility "/>
+                                <xsl:variable name="OrdNbr" select="nsmpr0:productDetail[1.0]/nsmpr0:ordNbr"/>
+                                <xsl:variable name="totalResults" select="count($getFacilities/nsmpr4:executeResponse/ns41:response-wrapper/ns41:results[($DestFac = ns41:code)])"/>
+                                <xsl:variable name="totalHdrResults" select="count($getHdrDetails/nsmpr5:executeResponse/ns49:response-wrapper/ns49:results[($DestFac = ns49:dest_facility_id__code and $OrdNbr = ns49:order_nbr)])"/>
+                                <xsl:variable name="totalGBCodeResults" select="count($getFacilities/nsmpr4:executeResponse/ns41:response-wrapper/ns41:results[($DestFac = ns41:code)])"/>
+                                <ns68:delivery>
+                                      <xsl:choose xml:id="id_180">
+                                            <xsl:when xml:id="id_181" test="nsmpr0:option = &quot;3&quot;">
+                                                  <xsl:when xml:id="id_181" test="string-length (nsmpr0:deliveryID) = 3">
+                                                        <xsl:for-each xml:id="id_187" select="$getFacilities/nsmpr4:executeResponse/ns41:response-wrapper/ns41:results[($Delivery = ns41:code)]">
+                                                              <ns68:deliveryID xml:id="id_188">
+                                                                    <xsl:value-of xml:id="id_189" select="ns41:id"/>
+                                                              </ns68:deliveryID>
+                                                        </xsl:for-each>
+                                                  </xsl:when>
+                                                  <xsl:otherwise xml:id="id_184">
+                                                        <ns68:deliveryID xml:id="id_188">
+                                                              <xsl:value-of xml:id="id_189" select="substring-after(nsmpr0:deliveryID, 'GB')"/>
+                                                        </ns68:deliveryID>
+                                                  </xsl:otherwise>
+                                            </xsl:when>
+                                            <xsl:otherwise xml:id="id_184">
+                                                  <ns68:deliveryID xml:id="id_188">
+                                                        <xsl:value-of xml:id="id_189" select="nsmpr0:deliveryID"/>
+                                                  </ns68:deliveryID>
+                                            </xsl:otherwise>
+                                      </xsl:choose>
+                                      <xsl:choose xml:id="id_180">
+                                            <xsl:when xml:id="id_181" test="$totalResults &gt; 0">
+                                                  <xsl:for-each select="$getFacilities/nsmpr4:executeResponse/ns41:response-wrapper/ns41:results[($DestFac = ns41:code)]">
+                                                        <xsl:choose xml:id="id_173">
+                                                              <xsl:when xml:id="id_174" test="ns41:cust_field_2 != &quot;&quot;">
+                                                                    <ns68:maxStackHeight xml:id="id_175">
+                                                                          <xsl:value-of xml:id="id_176" select="ns41:cust_field_2"/>
+                                                                    </ns68:maxStackHeight>
+                                                              </xsl:when>
+                                                              <xsl:otherwise xml:id="id_177">
+                                                                    <ns68:maxStackHeight xml:id="id_178">
+                                                                          <xsl:value-of xml:id="id_179" select="$maxstack"/>
+                                                                    </ns68:maxStackHeight>
+                                                              </xsl:otherwise>
+                                                        </xsl:choose>
+                                                  </xsl:for-each>
+                                            </xsl:when>
+                                            <xsl:otherwise xml:id="id_177">
+                                                  <ns68:maxStackHeight xml:id="id_178">
+                                                        <xsl:value-of xml:id="id_179" select="$maxstack"/>
+                                                  </ns68:maxStackHeight>
+                                            </xsl:otherwise>
+                                      </xsl:choose>
+                                      <xsl:choose xml:id="id_180">
+                                            <xsl:when xml:id="id_181" test="$totalHdrResults &gt; 0">
+                                                  <xsl:for-each-group xml:id="id_158" select="$getHdrDetails/nsmpr5:executeResponse/ns49:response-wrapper/ns49:results[($DestFac = ns49:dest_facility_id__code and $OrdNbr = ns49:order_nbr)]" group-by="concat(ns49:dest_facility_id__code, '|', ns49:order_nbr )">
+                                                        <xsl:if xml:id="id_191" test="(ns49:cust_number_4 != &quot;&quot;) and (ns49:cust_number_5 != &quot;&quot;)">
+                                                              <xsl:if xml:id="id_191" test="($DestFac = ns49:dest_facility_id__code and $OrdNbr = ns49:order_nbr  )">
+                                                                    <ns68:deliverySequence xml:id="id_192">
+                                                                          <xsl:value-of xml:id="id_193" select="(number ((ns49:cust_number_4 - 1) )) - (number ((ns49:cust_number_5 - 2) ))"/>
+                                                                    </ns68:deliverySequence>
+                                                              </xsl:if>
+                                                        </xsl:if>
+                                                  </xsl:for-each-group>
+                                            </xsl:when>
+                                            <xsl:otherwise xml:id="id_194">
+                                                  <ns68:deliverySequence xml:id="id_195">
+                                                        <xsl:value-of xml:id="id_196" select="$SecuenceNumberLookup"/>
+                                                  </ns68:deliverySequence>
+                                            </xsl:otherwise>
+                                      </xsl:choose>
+                                      <xsl:choose xml:id="id_180">
+                                            <xsl:when xml:id="id_181" test="$totalResults &gt; 0">
+                                                  <xsl:for-each xml:id="id_156" select="$getFacilities/nsmpr4:executeResponse/ns41:response-wrapper/ns41:results[($DestFac = ns41:code)]">
+                                                        <xsl:choose xml:id="id_162">
+                                                              <xsl:when xml:id="id_163" test="ns41:cust_field_3 != &quot;&quot;">
+                                                                    <ns68:groupingRule xml:id="id_164">
+                                                                          <xsl:value-of xml:id="id_165" select="ns41:cust_field_3"/>
+                                                                    </ns68:groupingRule>
+                                                              </xsl:when>
+                                                              <xsl:otherwise xml:id="id_166">
+                                                                    <ns68:groupingRule xml:id="id_167">
+                                                                          <xsl:value-of xml:id="id_168" select="$groupingRule"/>
+                                                                    </ns68:groupingRule>
+                                                              </xsl:otherwise>
+                                                        </xsl:choose>
+                                                  </xsl:for-each>
+                                            </xsl:when>
+                                            <xsl:otherwise xml:id="id_166">
+                                                  <ns68:groupingRule xml:id="id_167">
+                                                        <xsl:value-of xml:id="id_168" select="$groupingRule"/>
+                                                  </ns68:groupingRule>
+                                            </xsl:otherwise>
+                                      </xsl:choose>
+                                      <xsl:choose xml:id="id_180">
+                                            <xsl:when xml:id="id_181" test="$totalGBCodeResults &gt; 0">
+                                                  <xsl:for-each-group xml:id="id_187" select="$getStageLocation/nsmpr11:executeResponse/ns118:response-wrapper/ns118:parts[(contains(ns118:id, $DestFac) = true())]" group-by="ns118:id">
+                                                        <xsl:variable name="Location" select="ns118:payload/ns118:items[1]/ns118:stageLocation"/>
+                                                        <xsl:variable name="TotalLocation" select="count($getLocationTo/nsmpr10:executeResponse/ns117:response-wrapper/ns117:results[( $Location = ns117:locn_str)])"/>
+                                                        <xsl:choose xml:id="id_180">
+                                                              <xsl:when xml:id="id_181" test="$TotalLocation &gt; 0">
+                                                                    <xsl:for-each-group xml:id="id_187" select="$getLocationTo/nsmpr10:executeResponse/ns117:response-wrapper/ns117:results[( $Location = ns117:locn_str)]" group-by="ns117:locn_str">
+                                                                          <xsl:choose xml:id="id_180">
+                                                                                <xsl:when xml:id="id_181" test="$Location = ns117:locn_str">
+                                                                                      <ns68:stagingLocationID xml:id="id_188">
+                                                                                            <xsl:value-of xml:id="id_189" select="ns117:cust_field_3"/>
+                                                                                      </ns68:stagingLocationID>
+                                                                                </xsl:when>
+                                                                                <xsl:otherwise xml:id="id_184">
+                                                                                      <ns68:stagingLocationID xml:id="id_188">
+                                                                                            <xsl:value-of xml:id="id_189" select="concat(&quot;NONE&quot;, $Delivery)"/>
+                                                                                      </ns68:stagingLocationID>
+                                                                                </xsl:otherwise>
+                                                                          </xsl:choose>
+                                                                    </xsl:for-each-group>
+                                                              </xsl:when>
+                                                              <xsl:otherwise xml:id="id_184">
+                                                                    <ns68:stagingLocationID xml:id="id_188">
+                                                                          <xsl:value-of xml:id="id_189" select="concat(&quot;NONE&quot;, $Delivery)"/>
+                                                                    </ns68:stagingLocationID>
+                                                              </xsl:otherwise>
+                                                        </xsl:choose>
+                                                  </xsl:for-each-group>
+                                            </xsl:when>
+                                            <xsl:otherwise xml:id="id_184">
+                                                  <ns68:stagingLocationID xml:id="id_188">
+                                                        <xsl:value-of xml:id="id_189" select="concat(&quot;NONE&quot;, $Delivery)"/>
+                                                  </ns68:stagingLocationID>
+                                            </xsl:otherwise>
+                                      </xsl:choose>
+                                      <ns68:destination xml:id="id_170">
+                                            <xsl:value-of xml:id="id_171" select="nsmpr0:destination"/>
+                                      </ns68:destination>
+                                      <ns68:destination_name xml:id="id_170">
+                                            <xsl:value-of xml:id="id_171" select="nsmpr0:destination_name"/>
+                                      </ns68:destination_name>
+                                      <ns68:destination_route xml:id="id_170">
+                                            <xsl:value-of xml:id="id_171" select="nsmpr0:destination_route"/>
+                                      </ns68:destination_route>
+                                      <ns68:destination_custLong3 xml:id="id_170">
+                                            <xsl:value-of xml:id="id_171" select="nsmpr0:destination_custLong3"/>
+                                      </ns68:destination_custLong3>
+                                      <xsl:for-each select="nsmpr0:productDetail">
+                                            <ns68:productDetail>
+                                                  <ns68:productID>
+                                                        <xsl:value-of select="nsmpr0:productID"/>
+                                                  </ns68:productID>
+                                                  <ns68:quantity>
+                                                        <xsl:value-of select="nsmpr0:quantity"/>
+                                                  </ns68:quantity>
+                                                  <ns68:idbod>
+                                                        <xsl:value-of select="nsmpr0:idbod"/>
+                                                  </ns68:idbod>
+                                                  <ns68:ordLine>
+                                                        <xsl:value-of select="nsmpr0:ordLine"/>
+                                                  </ns68:ordLine>
+                                                  <ns68:ordNbr>
+                                                        <xsl:value-of select="nsmpr0:ordNbr"/>
+                                                  </ns68:ordNbr>
+                                                  <ns68:trayfactor>
+                                                        <xsl:value-of select="nsmpr0:trayfactor"/>
+                                                  </ns68:trayfactor>
+                                            </ns68:productDetail>
+                                      </xsl:for-each>
+                                </ns68:delivery>
+                          </xsl:for-each>
+                    </ns68:wsm>
+              </nstrgmpr:Write>
+        </xsl:template>

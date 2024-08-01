@@ -1,0 +1,1 @@
+Este es un ejemplo del archivo que se debe subir al SFTP
